@@ -1,9 +1,15 @@
-import { useAvatarSettings } from './avatar/useAvatarSettings';
-import { ColorField } from './components/ColorField';
-import { DebugPanel } from './components/DebugPanel';
-import { PlaybackButton } from './components/PlaybackButton';
-import { ResizableStage } from './components/ResizableStage';
-import { SelectField } from './components/SelectField';
+import { useRef, useState } from 'react';
+import { AVATAR_BACKGROUND_COLOR, useAvatarSettings } from './avatar/useAvatarSettings';
+import { COLOUR_PRESETS, HAIR_COLOUR_PRESETS } from './avatar/colours';
+import { COSTUME_ITEMS, EYE_WEAR_ITEMS, HAIR_ITEMS, HEAD_WEAR_ITEMS } from './avatar/items';
+import type { TabId } from './avatar/tabs';
+import { useOverscrollPulse } from './avatar/useOverscrollPulse';
+import { AvatarStage } from './components/customizer/AvatarStage';
+import { ColourGrid } from './components/customizer/ColourGrid';
+import { CompleteScreen } from './components/customizer/CompleteScreen';
+import { DebugReveal } from './components/customizer/DebugReveal';
+import { ItemGrid } from './components/customizer/ItemGrid';
+import { TabBar } from './components/customizer/TabBar';
 import { AVATAR_STATE_MACHINE_NAME, useAvatarRive } from './rive/useAvatarRive';
 import { useColorBinding } from './rive/useColorBinding';
 import { useEnumBinding } from './rive/useEnumBinding';
@@ -20,79 +26,100 @@ const COSTUME_PROPERTY = 'costume';
 const HEAD_WEAR_PROPERTY = 'headWear';
 const EYE_WEAR_PROPERTY = 'eyeWear';
 
+function randomOf<T>(items: T[]): T {
+  return items[Math.floor(Math.random() * items.length)];
+}
+
+type View = 'customizing' | 'complete';
+
 function App() {
   const { rive, RiveComponent, viewModelInstance } = useAvatarRive();
   const avatar = useAvatarSettings();
+  const [view, setView] = useState<View>('customizing');
+  const [activeTab, setActiveTab] = useState<TabId>('colour');
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const stageScale = useOverscrollPulse(scrollRef);
 
-  // Avatar state (persisted to localStorage) is the source of truth; these
-  // just keep Rive's properties following it.
+  // Avatar state (persisted + undo/redo) is the source of truth; these just
+  // keep Rive's properties following it.
   useColorBinding(BODY_COLOUR_PROPERTY, viewModelInstance, avatar.bodyColor);
-  useColorBinding(BACKGROUND_COLOUR_PROPERTY, viewModelInstance, avatar.backgroundColor);
+  useColorBinding(BACKGROUND_COLOUR_PROPERTY, viewModelInstance, AVATAR_BACKGROUND_COLOR);
   useColorBinding(HAIR_COLOUR_PROPERTY, viewModelInstance, avatar.hairColor);
-  const hairStyles = useEnumBinding(HAIR_STYLES_PROPERTY, viewModelInstance, avatar.hairStyle);
-  const costumes = useEnumBinding(COSTUME_PROPERTY, viewModelInstance, avatar.costume);
-  const headWears = useEnumBinding(HEAD_WEAR_PROPERTY, viewModelInstance, avatar.headWear);
-  const eyeWears = useEnumBinding(EYE_WEAR_PROPERTY, viewModelInstance, avatar.eyeWear);
+  useEnumBinding(HAIR_STYLES_PROPERTY, viewModelInstance, avatar.hairStyle);
+  useEnumBinding(COSTUME_PROPERTY, viewModelInstance, avatar.costume);
+  useEnumBinding(HEAD_WEAR_PROPERTY, viewModelInstance, avatar.headWear);
+  useEnumBinding(EYE_WEAR_PROPERTY, viewModelInstance, avatar.eyeWear);
 
   const playback = usePlaybackControl(rive, AVATAR_STATE_MACHINE_NAME);
 
+  const handleRandomise = () => {
+    avatar.setMany({
+      bodyColor: randomOf(COLOUR_PRESETS).hex,
+      hairColor: randomOf(COLOUR_PRESETS).hex,
+      hairStyle: randomOf(HAIR_ITEMS).value,
+      costume: randomOf(COSTUME_ITEMS).value,
+      headWear: randomOf(HEAD_WEAR_ITEMS).value,
+      eyeWear: randomOf(EYE_WEAR_ITEMS).value,
+    });
+  };
+
+  if (view === 'complete') {
+    return <CompleteScreen RiveComponent={RiveComponent} onBack={() => setView('customizing')} />;
+  }
+
   return (
-    <main className="page">
-      <h1 className="page__title">Rive ↔ React Data Binding</h1>
-      <p className="page__subtitle">Colour data binding + persisted avatar settings</p>
+    <div className="customizer">
+      <div className="customizer__header">
+        <AvatarStage
+          RiveComponent={RiveComponent}
+          onClose={() => {}}
+          onDone={() => setView('complete')}
+          onUndo={avatar.undo}
+          onRedo={avatar.redo}
+          canUndo={avatar.canUndo}
+          canRedo={avatar.canRedo}
+          onRandomise={handleRandomise}
+          scale={stageScale}
+        />
+        <TabBar activeTab={activeTab} onSelect={setActiveTab} />
+      </div>
 
-      <ResizableStage>
-        <RiveComponent />
-      </ResizableStage>
+      <div className="customizer__scroll" ref={scrollRef}>
+        {activeTab === 'colour' && (
+          <ColourGrid swatches={COLOUR_PRESETS} value={avatar.bodyColor} onChange={avatar.setBodyColor} />
+        )}
+        {activeTab === 'hair' && (
+          <>
+            <ItemGrid items={HAIR_ITEMS} value={avatar.hairStyle} onChange={avatar.setHairStyle} />
+            <p className="section-label">Hair colour</p>
+            <ColourGrid swatches={HAIR_COLOUR_PRESETS} value={avatar.hairColor} onChange={avatar.setHairColor} />
+          </>
+        )}
+        {activeTab === 'costume' && (
+          <ItemGrid items={COSTUME_ITEMS} value={avatar.costume} onChange={avatar.setCostume} />
+        )}
+        {activeTab === 'headWear' && (
+          <ItemGrid items={HEAD_WEAR_ITEMS} value={avatar.headWear} onChange={avatar.setHeadWear} />
+        )}
+        {activeTab === 'eyeWear' && (
+          <ItemGrid items={EYE_WEAR_ITEMS} value={avatar.eyeWear} onChange={avatar.setEyeWear} />
+        )}
 
-      <section className="controls">
-        <ColorField label="Body colour" hex={avatar.bodyColor} onChange={avatar.setBodyColor} />
-        <ColorField
-          label="Background colour"
-          hex={avatar.backgroundColor}
-          onChange={avatar.setBackgroundColor}
+        <DebugReveal
+          bodyColorHex={avatar.bodyColor}
+          backgroundColorHex={AVATAR_BACKGROUND_COLOR}
+          hairColorHex={avatar.hairColor}
+          hairStyle={avatar.hairStyle}
+          costume={avatar.costume}
+          headWear={avatar.headWear}
+          eyeWear={avatar.eyeWear}
+          isSavedLocally={avatar.isSavedLocally}
+          onReset={avatar.reset}
+          isPlaying={playback.isPlaying}
+          onTogglePlayback={playback.toggle}
         />
-        <ColorField label="Hair colour" hex={avatar.hairColor} onChange={avatar.setHairColor} />
-        <SelectField
-          label="Hair style"
-          value={avatar.hairStyle}
-          options={hairStyles.values}
-          onChange={avatar.setHairStyle}
-        />
-        <SelectField
-          label="Costume"
-          value={avatar.costume}
-          options={costumes.values}
-          onChange={avatar.setCostume}
-        />
-        <SelectField
-          label="Head wear"
-          value={avatar.headWear}
-          options={headWears.values}
-          onChange={avatar.setHeadWear}
-        />
-        <SelectField
-          label="Eye wear"
-          value={avatar.eyeWear}
-          options={eyeWears.values}
-          onChange={avatar.setEyeWear}
-        />
-      </section>
-
-      <PlaybackButton isPlaying={playback.isPlaying} onToggle={playback.toggle} />
-
-      <DebugPanel
-        bodyColorHex={avatar.bodyColor}
-        backgroundColorHex={avatar.backgroundColor}
-        hairColorHex={avatar.hairColor}
-        hairStyle={avatar.hairStyle}
-        costume={avatar.costume}
-        headWear={avatar.headWear}
-        eyeWear={avatar.eyeWear}
-        isSavedLocally={avatar.isSavedLocally}
-        onReset={avatar.reset}
-      />
-    </main>
+      </div>
+    </div>
   );
 }
 
