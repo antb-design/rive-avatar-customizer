@@ -9,16 +9,25 @@
   --accent: #4f46e5;
   --selected-tint: #e6ecff;
 
-  /* Reflow breakpoints: the avatar stage stays a focal square, the
-     scrollable content area widens more so item grids gain columns. */
+  /* Reflow breakpoints: the tab bar stays a focused width, the scrollable
+     content area widens more so item grids gain columns. The avatar stage
+     itself is handled separately below — it goes full-bleed. */
   --stage-max: 420px;
   --content-max: 480px;
+  --avatar-max-height: 520px;
+  --avatar-edge-inset: 16px;
+  /* Visible diameter of the overlay circle buttons (close/done/undo/redo/
+     randomise) — sized against .colour-swatch (56px) so they read as part
+     of the same UI language, a touch smaller on mobile and scaling up on
+     larger screens. */
+  --overlay-icon-size: 48px;
 }
 
 @media (min-width: 640px) {
   :root {
     --stage-max: 460px;
     --content-max: 680px;
+    --overlay-icon-size: 54px;
   }
 }
 
@@ -26,6 +35,8 @@
   :root {
     --stage-max: 520px;
     --content-max: 960px;
+    --avatar-edge-inset: 24px;
+    --overlay-icon-size: 62px;
   }
 }
 
@@ -52,10 +63,13 @@ body {
   display: flex;
   flex-direction: column;
   height: 100dvh;
-  max-width: var(--content-max);
-  margin: 0 auto;
   background: var(--bg);
   overflow: hidden;
+  /* Deliberately no max-width here: the avatar stage below goes full-bleed
+     edge-to-edge on wide screens. Everything else (tab bar, item/colour
+     grids, debug panel) caps its own width via --content-max/--stage-max
+     and relies on the flex centring on .customizer__header/__scroll, so
+     it stays a focused column regardless of how wide this shell is. */
 }
 
 .customizer__header {
@@ -82,9 +96,15 @@ body {
 .avatar-stage {
   position: relative;
   width: 100%;
-  max-width: var(--stage-max);
   aspect-ratio: 1 / 1;
-  margin: 0 auto;
+  /* On narrow screens width < avatar-max-height, so aspect-ratio just
+     makes it square as before. Past that, max-height clamps the height
+     while width keeps tracking 100% — the box widens into a full-bleed
+     banner instead of growing into an enormous square. The Rive artboard
+     (Fill background + Fit-height character) responds to that canvas
+     shape on its own: the background fills the new width edge-to-edge
+     and the character's size — driven by height — stays put. */
+  max-height: var(--avatar-max-height);
   border-radius: 0 0 24px 24px;
   overflow: hidden;
   background: var(--panel);
@@ -113,24 +133,24 @@ body {
 .avatar-stage__header,
 .avatar-stage__footer {
   position: absolute;
-  left: 16px;
-  right: 16px;
+  left: var(--avatar-edge-inset);
+  right: var(--avatar-edge-inset);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
 .avatar-stage__header {
-  top: 16px;
+  top: var(--avatar-edge-inset);
 }
 
 .avatar-stage__footer {
-  bottom: 16px;
+  bottom: var(--avatar-edge-inset);
 }
 
 .avatar-stage__history {
   display: flex;
-  gap: 4px;
+  gap: 8px;
 }
 
 .overlay-icon-btn {
@@ -144,12 +164,27 @@ body {
 
 .overlay-icon-btn img {
   display: block;
-  height: 40px;
+  /* Each button's SVG is a 52px-tall viewBox where the visible white circle
+     is only the top 40px (the rest was headroom for the old baked-in
+     shadow, now unused). Scale by that 52/40 ratio so --overlay-icon-size
+     lands on the actual visible circle diameter, not the padded box. */
+  height: calc(var(--overlay-icon-size) * 52 / 40);
   width: auto;
+  /* The shadow used to be baked into each SVG via a <filter>, rasterized
+     once at the SVG's own fixed size — at small display sizes/high DPI
+     that raster gets rescaled and looks rough. A CSS drop-shadow is
+     computed live by the browser at the actual render resolution, so it
+     stays crisp regardless of display size or screen density. */
+  filter: drop-shadow(0 2px 3px rgba(107, 114, 128, 0.35)) drop-shadow(0 6px 8px rgba(0, 0, 0, 0.15));
 }
 
 .overlay-icon-btn:disabled {
   cursor: default;
+  opacity: 0.5;
+}
+
+.overlay-icon-btn:disabled img {
+  filter: drop-shadow(0 1px 2px rgba(107, 114, 128, 0.15)) drop-shadow(0 3px 4px rgba(0, 0, 0, 0.06));
 }
 
 /* ---------- Tab bar ---------- */

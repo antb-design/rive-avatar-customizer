@@ -1,23 +1,7 @@
-<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="56" height="52" viewBox="0 0 56 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="Overlay Icon Button" filter="url(#filter0_dd_0_50)">
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="44" height="52" viewBox="6 0 44 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Overlay Icon Button">
 <path d="M6 8C6 3.58172 9.58172 0 14 0H30C41.0457 0 50 8.95431 50 20V20C50 31.0457 41.0457 40 30 40H14C9.58172 40 6 36.4183 6 32V8Z" fill="#DDE5FF" shape-rendering="crispEdges"/>
 <path id="Vector" d="M32.4125 18.2875H26.1125C25.0625 18.2875 24.15 18.6208 23.375 19.2875C22.6 19.9542 22.2125 20.7875 22.2125 21.7875C22.2125 22.7875 22.6 23.6208 23.375 24.2875C24.15 24.9542 25.0625 25.2875 26.1125 25.2875H32.2125C32.4958 25.2875 32.7333 25.3833 32.925 25.575C33.1167 25.7667 33.2125 26.0042 33.2125 26.2875C33.2125 26.5708 33.1167 26.8083 32.925 27C32.7333 27.1917 32.4958 27.2875 32.2125 27.2875H26.1125C24.4958 27.2875 23.1083 26.7625 21.95 25.7125C20.7917 24.6625 20.2125 23.3542 20.2125 21.7875C20.2125 20.2208 20.7917 18.9125 21.95 17.8625C23.1083 16.8125 24.4958 16.2875 26.1125 16.2875H32.4125L30.5125 14.3875C30.3292 14.2042 30.2375 13.9708 30.2375 13.6875C30.2375 13.4042 30.3292 13.1708 30.5125 12.9875C30.6958 12.8042 30.9292 12.7125 31.2125 12.7125C31.4958 12.7125 31.7292 12.8042 31.9125 12.9875L35.5125 16.5875C35.6125 16.6875 35.6833 16.7958 35.725 16.9125C35.7667 17.0292 35.7875 17.1542 35.7875 17.2875C35.7875 17.4208 35.7667 17.5458 35.725 17.6625C35.6833 17.7792 35.6125 17.8875 35.5125 17.9875L31.9125 21.5875C31.7292 21.7708 31.4958 21.8625 31.2125 21.8625C30.9292 21.8625 30.6958 21.7708 30.5125 21.5875C30.3292 21.4042 30.2375 21.1708 30.2375 20.8875C30.2375 20.6042 30.3292 20.3708 30.5125 20.1875L32.4125 18.2875Z" fill="#2B2F37" stroke="#2B2F37" stroke-width="0.7"/>
 </g>
-<defs>
-<filter id="filter0_dd_0_50" x="0" y="0" width="56" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-<feFlood flood-opacity="0" result="BackgroundImageFix"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="6"/>
-<feGaussianBlur stdDeviation="3"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.2 0"/>
-<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_0_50"/>
-<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
-<feOffset dy="2"/>
-<feComposite in2="hardAlpha" operator="out"/>
-<feColorMatrix type="matrix" values="0 0 0 0 0.715163 0 0 0 0 0.715163 0 0 0 0 0.715163 0 0 0 1 0"/>
-<feBlend mode="normal" in2="effect1_dropShadow_0_50" result="effect2_dropShadow_0_50"/>
-<feBlend mode="normal" in="SourceGraphic" in2="effect2_dropShadow_0_50" result="shape"/>
-</filter>
-</defs>
+
 </svg>

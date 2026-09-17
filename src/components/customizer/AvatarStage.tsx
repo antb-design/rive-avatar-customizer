@@ -1,5 +1,6 @@
 import { motion, type MotionValue } from 'framer-motion';
-import type { ComponentType } from 'react';
+import { useRef, type ComponentType } from 'react';
+import { useResponsiveStageHeight } from '../../avatar/useResponsiveStageHeight';
 import { OverlayIconButton } from './OverlayIconButton';
 
 type AvatarStageProps = {
@@ -15,10 +16,15 @@ type AvatarStageProps = {
 };
 
 /**
- * The square avatar block: the Rive canvas filling it edge-to-edge, with
+ * The avatar block: the Rive canvas filling it edge-to-edge, with
  * close/done overlaid top corners and undo/redo/randomise overlaid the
  * bottom corners, matching the Figma design. `scale` (optional) drives the
  * overscroll-pulse effect from useOverscrollPulse.
+ *
+ * Height is set explicitly via useResponsiveStageHeight (JS + ResizeObserver)
+ * rather than left to CSS `aspect-ratio` + `max-height` alone — see that
+ * hook for why (a Safari `aspect-ratio`/ResizeObserver quirk could leave
+ * the Rive canvas's render buffer stuck at a stale, narrower size).
  */
 export function AvatarStage({
   RiveComponent,
@@ -31,8 +37,15 @@ export function AvatarStage({
   onRandomise,
   scale,
 }: AvatarStageProps) {
+  const stageRef = useRef<HTMLDivElement>(null);
+  const height = useResponsiveStageHeight(stageRef);
+
   return (
-    <motion.div className="avatar-stage" style={scale ? { scale } : undefined}>
+    <motion.div
+      ref={stageRef}
+      className="avatar-stage"
+      style={{ ...(height ? { height } : {}), ...(scale ? { scale } : {}) }}
+    >
       <div className="avatar-stage__canvas">
         <RiveComponent />
       </div>
