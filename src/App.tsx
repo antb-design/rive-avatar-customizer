@@ -10,7 +10,7 @@ import { CompleteScreen } from './components/customizer/CompleteScreen';
 import { DebugReveal } from './components/customizer/DebugReveal';
 import { ItemGrid } from './components/customizer/ItemGrid';
 import { TabBar } from './components/customizer/TabBar';
-import { AVATAR_STATE_MACHINE_NAME, useAvatarRive } from './rive/useAvatarRive';
+import { AVATAR_STATE_MACHINE_NAME, useAvatarRive, useWinRive } from './rive/useAvatarRive';
 import { useColorBinding } from './rive/useColorBinding';
 import { useEnumBinding } from './rive/useEnumBinding';
 import { usePlaybackControl } from './rive/usePlaybackControl';
@@ -34,6 +34,7 @@ type View = 'customizing' | 'complete';
 
 function App() {
   const { rive, RiveComponent, viewModelInstance } = useAvatarRive();
+  const { RiveComponent: WinRiveComponent, viewModelInstance: winViewModelInstance } = useWinRive();
   const avatar = useAvatarSettings();
   const [view, setView] = useState<View>('customizing');
   const [activeTab, setActiveTab] = useState<TabId>('colour');
@@ -50,6 +51,17 @@ function App() {
   useEnumBinding(HEAD_WEAR_PROPERTY, viewModelInstance, avatar.headWear);
   useEnumBinding(EYE_WEAR_PROPERTY, viewModelInstance, avatar.eyeWear);
 
+  // The win artboard is a separate Rive instance with its own copy of the
+  // CharacterViewModel data, so it needs the same settings re-applied to
+  // stay visually in sync with the customiser.
+  useColorBinding(BODY_COLOUR_PROPERTY, winViewModelInstance, avatar.bodyColor);
+  useColorBinding(BACKGROUND_COLOUR_PROPERTY, winViewModelInstance, AVATAR_BACKGROUND_COLOR);
+  useColorBinding(HAIR_COLOUR_PROPERTY, winViewModelInstance, avatar.hairColor);
+  useEnumBinding(HAIR_STYLES_PROPERTY, winViewModelInstance, avatar.hairStyle);
+  useEnumBinding(COSTUME_PROPERTY, winViewModelInstance, avatar.costume);
+  useEnumBinding(HEAD_WEAR_PROPERTY, winViewModelInstance, avatar.headWear);
+  useEnumBinding(EYE_WEAR_PROPERTY, winViewModelInstance, avatar.eyeWear);
+
   const playback = usePlaybackControl(rive, AVATAR_STATE_MACHINE_NAME);
 
   const handleRandomise = () => {
@@ -64,7 +76,7 @@ function App() {
   };
 
   if (view === 'complete') {
-    return <CompleteScreen RiveComponent={RiveComponent} onBack={() => setView('customizing')} />;
+    return <CompleteScreen RiveComponent={WinRiveComponent} onBack={() => setView('customizing')} />;
   }
 
   return (

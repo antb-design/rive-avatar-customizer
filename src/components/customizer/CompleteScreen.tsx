@@ -6,9 +6,8 @@ type CompleteScreenProps = {
 };
 
 /**
- * Placeholder "done" screen: a bigger, uninterrupted view of the avatar
- * with an edit button back to the customiser. Just a stand-in for now —
- * the eventual success/celebration animation isn't built yet.
+ * "Done" screen: the win artboard's celebration animation full-screen,
+ * with an edit button back to the customiser.
  */
 export function CompleteScreen({ RiveComponent, onBack }: CompleteScreenProps) {
   return (

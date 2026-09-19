@@ -387,17 +387,13 @@ body {
 .complete-screen {
   position: relative;
   height: 100dvh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
   background: var(--bg);
 }
 
 .complete-screen__stage {
-  width: min(90vw, 600px);
-  aspect-ratio: 1 / 1;
-  border-radius: 24px;
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
 }
 
 .complete-screen__stage canvas {
