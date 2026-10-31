@@ -346,14 +346,15 @@ input:focus-visible {
 .customizer__preview {
   grid-column: 2;
   grid-row: 1;
-  padding: clamp(20px, 3vw, 46px);
   display: flex;
   align-items: center;
 }
 
 .avatar-stage {
-  border-radius: 48% 48% 32px 32px;
-  box-shadow: 0 24px 60px rgba(78, 55, 36, 0.16);
+  height: 100% !important;
+  max-height: none;
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .customizer__editor {
@@ -668,6 +669,7 @@ input:focus-visible {
   }
 
   .avatar-stage {
+    height: min(100vw, 42dvh, 390px) !important;
     max-width: none;
     border: 0;
     border-radius: 0;
