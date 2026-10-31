@@ -3,17 +3,15 @@ import { Fit, Layout, useRive } from '@rive-app/react-canvas';
 // Pointed at the updated responsive-layout export while it's being tried out.
 export const AVATAR_RIVE_SRC = '/rive/avatar2.riv';
 export const AVATAR_ARTBOARD_NAME = 'playerAvatar';
+export const WIN_ARTBOARD_NAME = 'win';
 export const AVATAR_STATE_MACHINE_NAME = 'State Machine 1';
 
 /**
- * Loads the avatar .riv file and plays the playerAvatar artboard's
- * "State Machine 1" (the yoyo bob animation) as normal.
- *
- * The state machine name is passed explicitly rather than left to autoplay
- * defaults: the artboard also has a linear "Timeline 1" animation, and
- * Rive's default (no `stateMachine` given) plays that first linear
- * animation instead of the state machine, which was silently skipping the
- * bob.
+ * Loads one artboard from the avatar .riv file and plays its
+ * "State Machine 1". Both playerAvatar and win have their own linear
+ * "Timeline 1" alongside that state machine, and Rive's default (no
+ * `stateMachine` given) plays the timeline instead — so the name is always
+ * passed explicitly.
  *
  * `autoBind: true` tells Rive to find and bind the artboard's default View
  * Model instance automatically, so `rive.viewModelInstance` becomes
@@ -26,10 +24,10 @@ export const AVATAR_STATE_MACHINE_NAME = 'State Machine 1';
  * itself to match the canvas size, so the artboard's own Fill / Fit height
  * constraints on its children can actually respond to that size.
  */
-export function useAvatarRive() {
+function useArtboardRive(artboard: string) {
   const { rive, RiveComponent } = useRive({
     src: AVATAR_RIVE_SRC,
-    artboard: AVATAR_ARTBOARD_NAME,
+    artboard,
     stateMachine: AVATAR_STATE_MACHINE_NAME,
     autoplay: true,
     autoBind: true,
@@ -41,4 +39,19 @@ export function useAvatarRive() {
     RiveComponent,
     viewModelInstance: rive?.viewModelInstance ?? null,
   };
+}
+
+export function useAvatarRive() {
+  return useArtboardRive(AVATAR_ARTBOARD_NAME);
+}
+
+/**
+ * Loads the "win" artboard — the full-screen celebration shown after
+ * "Done" — as a separate Rive instance from the customiser's playerAvatar.
+ * It has its own copy of the CharacterViewModel data, so App.tsx re-applies
+ * the same avatar settings to it via the usual useColorBinding/useEnumBinding
+ * hooks to keep it visually in sync.
+ */
+export function useWinRive() {
+  return useArtboardRive(WIN_ARTBOARD_NAME);
 }
