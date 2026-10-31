@@ -66,8 +66,7 @@ input:focus-visible {
   min-height: 0;
 }
 
-.editor-heading__eyebrow,
-.selection-heading p {
+.editor-heading__eyebrow {
   margin: 0;
   color: var(--muted);
   font-size: 11px;
@@ -78,17 +77,10 @@ input:focus-visible {
 
 .editor-heading h1 {
   margin: 8px 0;
+  width: min(100%, 364px);
   font-size: clamp(28px, 3.3vw, 48px);
   line-height: 0.98;
   letter-spacing: -0.055em;
-}
-
-.editor-heading__description {
-  max-width: 48ch;
-  margin: 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.5;
 }
 
 .selection-heading {
@@ -105,7 +97,7 @@ input:focus-visible {
 }
 
 .selection-heading h2 {
-  margin: 3px 0 0;
+  margin: 0;
   font-size: 20px;
   letter-spacing: -0.03em;
 }
@@ -374,7 +366,7 @@ input:focus-visible {
 
 .tab-bar {
   margin: 26px 0 18px;
-  gap: 8px;
+  gap: 24px;
 }
 
 .tab-bar__item {
@@ -389,7 +381,7 @@ input:focus-visible {
   content: "";
   position: absolute;
   left: 100%;
-  width: 9px;
+  width: 25px;
   height: 1px;
   background: #e4dbcc;
 }
@@ -406,6 +398,15 @@ input:focus-visible {
 .tab-bar__icon {
   width: 30px;
   height: 30px;
+}
+
+.tab-bar__icon--hair,
+.tab-bar__icon--headWear {
+  height: 22px;
+}
+
+.tab-bar__icon--eyeWear {
+  height: 14px;
 }
 
 .tab-bar__label {
@@ -703,10 +704,6 @@ input:focus-visible {
     margin: 4px 0 0;
     font-family: inherit !important;
     font-size: 25px !important;
-  }
-
-  .editor-heading__description {
-    display: none;
   }
 
   .tab-bar {

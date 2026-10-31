@@ -105,11 +105,8 @@ function App() {
 
         <section className="customizer__editor">
           <div className="editor-heading">
-            <p className="editor-heading__eyebrow">Create your character</p>
-            <h1>Create, one step at a time</h1>
-            <p className="editor-heading__description">
-              Make your avatar yours through five simple decisions.
-            </p>
+            <p className="editor-heading__eyebrow">MAKE</p>
+            <h1>Create your own character</h1>
           </div>
 
           <TabBar activeTab={activeTab} onSelect={setActiveTab} />
@@ -120,7 +117,6 @@ function App() {
                 {String(activeTabIndex + 1).padStart(2, '0')} / {String(enabledTabs.length).padStart(2, '0')}
               </span>
               <div>
-                <p>Now choosing</p>
                 <h2>{activeTabConfig?.label}</h2>
               </div>
             </div>

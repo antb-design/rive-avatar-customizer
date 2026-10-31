@@ -30,7 +30,7 @@ export function TabBar({ activeTab, onSelect }: TabBarProps) {
             <img
               src={selected ? tab.iconSelected : tab.iconDefault}
               alt=""
-              className={`tab-bar__icon${sharesGlyph && !selected ? ' tab-bar__icon--dimmed' : ''}`}
+              className={`tab-bar__icon tab-bar__icon--${tab.id}${sharesGlyph && !selected ? ' tab-bar__icon--dimmed' : ''}`}
             />
             <span className="tab-bar__label">{tab.label}</span>
           </button>
