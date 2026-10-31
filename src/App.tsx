@@ -9,7 +9,6 @@ import { ColourGrid } from './components/customizer/ColourGrid';
 import { CompleteScreen } from './components/customizer/CompleteScreen';
 import { DebugReveal } from './components/customizer/DebugReveal';
 import { ItemGrid } from './components/customizer/ItemGrid';
-import { LayoutSwitcher, type LayoutId } from './components/customizer/LayoutSwitcher';
 import { TabBar } from './components/customizer/TabBar';
 import { AVATAR_STATE_MACHINE_NAME, useAvatarRive, useWinRive } from './rive/useAvatarRive';
 import { useColorBinding } from './rive/useColorBinding';
@@ -33,36 +32,12 @@ function randomOf<T>(items: T[]): T {
 
 type View = 'customizing' | 'complete';
 
-const LAYOUT_COPY: Record<LayoutId, { eyebrow: string; title: string; description: string }> = {
-  studio: {
-    eyebrow: 'Concept 01 · Split studio',
-    title: 'Build your character',
-    description: 'A generous live canvas with every tool close at hand. Best for desktop and detailed exploration.',
-  },
-  pocket: {
-    eyebrow: 'Concept 02 · Pocket drawer',
-    title: 'Make it yours',
-    description: 'The character stays in focus while choices slide up from a tactile, mobile-first drawer.',
-  },
-  deck: {
-    eyebrow: 'Concept 03 · Command deck',
-    title: 'Avatar control',
-    description: 'A compact category rail and dense option console for fast, playful experimentation.',
-  },
-  journey: {
-    eyebrow: 'Concept 04 · Guided journey',
-    title: 'Create, one step at a time',
-    description: 'A calmer wizard that turns a large set of choices into five simple decisions.',
-  },
-};
-
 function App() {
   const { rive, RiveComponent, viewModelInstance } = useAvatarRive();
   const { RiveComponent: WinRiveComponent, viewModelInstance: winViewModelInstance } = useWinRive();
   const avatar = useAvatarSettings();
   const [view, setView] = useState<View>('customizing');
   const [activeTab, setActiveTab] = useState<TabId>('colour');
-  const [layout, setLayout] = useState<LayoutId>('studio');
   const scrollRef = useRef<HTMLDivElement>(null);
   const stageScale = useOverscrollPulse(scrollRef);
 
@@ -91,7 +66,6 @@ function App() {
   const enabledTabs = TABS.filter((tab) => tab.enabled);
   const activeTabIndex = enabledTabs.findIndex((tab) => tab.id === activeTab);
   const activeTabConfig = enabledTabs[activeTabIndex];
-  const layoutCopy = LAYOUT_COPY[layout];
 
   const handleRandomise = () => {
     avatar.setMany({
@@ -109,22 +83,20 @@ function App() {
   }
 
   return (
-    <div className={`customizer customizer--${layout}`}>
-      <LayoutSwitcher value={layout} onChange={setLayout} />
-
+    <div className="customizer">
       <main className="customizer__workspace">
         <section className="customizer__preview" aria-label="Avatar preview">
-        <AvatarStage
-          RiveComponent={RiveComponent}
-          onClose={() => {}}
-          onDone={() => setView('complete')}
-          onUndo={avatar.undo}
-          onRedo={avatar.redo}
-          canUndo={avatar.canUndo}
-          canRedo={avatar.canRedo}
-          onRandomise={handleRandomise}
-          scale={stageScale}
-        />
+          <AvatarStage
+            RiveComponent={RiveComponent}
+            onClose={() => {}}
+            onDone={() => setView('complete')}
+            onUndo={avatar.undo}
+            onRedo={avatar.redo}
+            canUndo={avatar.canUndo}
+            canRedo={avatar.canRedo}
+            onRandomise={handleRandomise}
+            scale={stageScale}
+          />
           <div className="preview-caption">
             <span>Live preview</span>
             <strong>Changes save automatically</strong>
@@ -133,9 +105,11 @@ function App() {
 
         <section className="customizer__editor">
           <div className="editor-heading">
-            <p className="editor-heading__eyebrow">{layoutCopy.eyebrow}</p>
-            <h1>{layoutCopy.title}</h1>
-            <p className="editor-heading__description">{layoutCopy.description}</p>
+            <p className="editor-heading__eyebrow">Create your character</p>
+            <h1>Create, one step at a time</h1>
+            <p className="editor-heading__description">
+              Make your avatar yours through five simple decisions.
+            </p>
           </div>
 
           <TabBar activeTab={activeTab} onSelect={setActiveTab} />
@@ -150,39 +124,43 @@ function App() {
                 <h2>{activeTabConfig?.label}</h2>
               </div>
             </div>
-        {activeTab === 'colour' && (
-          <ColourGrid swatches={COLOUR_PRESETS} value={avatar.bodyColor} onChange={avatar.setBodyColor} />
-        )}
-        {activeTab === 'hair' && (
-          <>
-            <ItemGrid items={HAIR_ITEMS} value={avatar.hairStyle} onChange={avatar.setHairStyle} />
-            <p className="section-label">Hair colour</p>
-            <ColourGrid swatches={HAIR_COLOUR_PRESETS} value={avatar.hairColor} onChange={avatar.setHairColor} />
-          </>
-        )}
-        {activeTab === 'costume' && (
-          <ItemGrid items={COSTUME_ITEMS} value={avatar.costume} onChange={avatar.setCostume} />
-        )}
-        {activeTab === 'headWear' && (
-          <ItemGrid items={HEAD_WEAR_ITEMS} value={avatar.headWear} onChange={avatar.setHeadWear} />
-        )}
-        {activeTab === 'eyeWear' && (
-          <ItemGrid items={EYE_WEAR_ITEMS} value={avatar.eyeWear} onChange={avatar.setEyeWear} />
-        )}
+            {activeTab === 'colour' && (
+              <ColourGrid swatches={COLOUR_PRESETS} value={avatar.bodyColor} onChange={avatar.setBodyColor} />
+            )}
+            {activeTab === 'hair' && (
+              <>
+                <ItemGrid items={HAIR_ITEMS} value={avatar.hairStyle} onChange={avatar.setHairStyle} />
+                <p className="section-label">Hair colour</p>
+                <ColourGrid
+                  swatches={HAIR_COLOUR_PRESETS}
+                  value={avatar.hairColor}
+                  onChange={avatar.setHairColor}
+                />
+              </>
+            )}
+            {activeTab === 'costume' && (
+              <ItemGrid items={COSTUME_ITEMS} value={avatar.costume} onChange={avatar.setCostume} />
+            )}
+            {activeTab === 'headWear' && (
+              <ItemGrid items={HEAD_WEAR_ITEMS} value={avatar.headWear} onChange={avatar.setHeadWear} />
+            )}
+            {activeTab === 'eyeWear' && (
+              <ItemGrid items={EYE_WEAR_ITEMS} value={avatar.eyeWear} onChange={avatar.setEyeWear} />
+            )}
 
-        <DebugReveal
-          bodyColorHex={avatar.bodyColor}
-          backgroundColorHex={AVATAR_BACKGROUND_COLOR}
-          hairColorHex={avatar.hairColor}
-          hairStyle={avatar.hairStyle}
-          costume={avatar.costume}
-          headWear={avatar.headWear}
-          eyeWear={avatar.eyeWear}
-          isSavedLocally={avatar.isSavedLocally}
-          onReset={avatar.reset}
-          isPlaying={playback.isPlaying}
-          onTogglePlayback={playback.toggle}
-        />
+            <DebugReveal
+              bodyColorHex={avatar.bodyColor}
+              backgroundColorHex={AVATAR_BACKGROUND_COLOR}
+              hairColorHex={avatar.hairColor}
+              hairStyle={avatar.hairStyle}
+              costume={avatar.costume}
+              headWear={avatar.headWear}
+              eyeWear={avatar.eyeWear}
+              isSavedLocally={avatar.isSavedLocally}
+              onReset={avatar.reset}
+              isPlaying={playback.isPlaying}
+              onTogglePlayback={playback.toggle}
+            />
           </div>
 
           <div className="journey-nav">
