@@ -240,19 +240,19 @@ input:focus-visible {
 }
 
 .item-grid {
-  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  gap: 16px;
 }
 
 .item-card {
-  width: 78px;
-  height: 78px;
-  padding: 9px;
+  width: 96px;
+  height: 96px;
+  padding: 11px;
   display: grid;
   place-items: center;
   background: var(--paper);
   border: 2px solid transparent;
-  border-radius: 21px;
+  border-radius: 24px;
   cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
@@ -767,11 +767,11 @@ input:focus-visible {
   }
 
   .item-grid {
-    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(82px, 1fr));
   }
 
   .item-card {
-    width: 68px;
-    height: 68px;
+    width: 82px;
+    height: 82px;
   }
 }
